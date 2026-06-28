@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "vitals.h"
 
 void get_memory(long long *total, long long *available) {
@@ -17,4 +16,19 @@ void get_memory(long long *total, long long *available) {
         if (*total && *available) break;
     }
     fclose(meminfo);
+}
+
+void get_battery(int *capacity, char* status) {
+    FILE* batterycap = fopen("/sys/class/power_supply/BAT1/capacity", "r");
+    if (!batterycap) return;
+    fscanf(batterycap, "%d", capacity);
+    fclose(batterycap);
+    FILE* batterystatus = fopen("/sys/class/power_supply/BAT1/status", "r");
+    if (!batterystatus) return;
+    fscanf(batterystatus, "%s", status);
+    fclose(batterystatus);
+}
+
+void get_cpu_usage(double *usage) {
+
 }
