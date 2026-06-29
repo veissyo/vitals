@@ -50,3 +50,26 @@ void get_cpu_usage(float *usage) {
     fclose(cpuusage2);
 }
 
+void get_hostname(char* hostname) {
+    FILE* hostnamefile = fopen("/etc/hostname", "r");
+    if (!hostnamefile) return;
+    fscanf(hostnamefile, "%s", hostname);
+    fclose(hostnamefile);
+}
+
+void get_temp(float *temp) {
+    FILE* tempfile = fopen("/sys/class/thermal/thermal_zone0/temp", "r");
+    if (!tempfile) return;
+    float raw;
+    fscanf(tempfile, "%f", &raw);
+    *temp = raw / 1000.0f;
+    fclose(tempfile);
+}
+
+void get_uptime(float *uptime) {
+    FILE* uptimefile = fopen("/proc/uptime", "r");
+    if (!uptimefile) return;
+    fscanf(uptimefile, "%f", uptime);
+    *uptime = (int)*uptime;
+    fclose(uptimefile);
+}
