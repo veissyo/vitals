@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "vitals.h"
+#include <unistd.h>
 
 void get_memory(long long *total, long long *available) {
     FILE* meminfo = fopen("/proc/meminfo", "r");
@@ -29,6 +30,23 @@ void get_battery(int *capacity, char* status) {
     fclose(batterystatus);
 }
 
-void get_cpu_usage(double *usage) {
-
+void get_cpu_usage(float *usage) {
+    FILE* cpuusage = fopen("/proc/stat", "r");
+    if (!cpuusage) return;
+    char label[8];
+    long long user, nice, system, idle, iowait, irq, softirq;
+    fscanf(cpuusage, "%s %lld %lld %lld %lld %lld %lld %lld",label, &user, &nice, &system, &idle, &iowait, &irq, &softirq);
+    float total1 = user + nice + system + idle + iowait + irq + softirq;
+    long long idle1 = idle;
+    fclose(cpuusage);
+    usleep(100000);
+    FILE* cpuusage2 = fopen("/proc/stat", "r");
+    if (!cpuusage2) return;
+    char label2[8];
+    long long user2, nice2, system2, idle2, iowait2, irq2, softirq2;
+    fscanf(cpuusage2, "%s %lld %lld %lld %lld %lld %lld %lld",label2, &user2, &nice2, &system2, &idle2, &iowait2, &irq2, &softirq2);
+    float total2 = user2 + nice2 + system2 + idle2 + iowait2 + irq2 + softirq2;
+    *usage = (1.0f - (float)(idle2 - idle1) / (float)(total2 - total1)) * 100;
+    fclose(cpuusage2);
 }
+

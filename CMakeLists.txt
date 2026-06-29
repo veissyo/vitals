@@ -5,4 +5,6 @@ set(CMAKE_C_STANDARD 11)
 
 add_executable(vitals main.c
         vitals.c
-        vitals.h)
+        vitals.h
+        visuals.c
+        visuals.h)
